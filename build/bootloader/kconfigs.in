@@ -1,0 +1,5 @@
+source "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/efuse/Kconfig"
+source "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/esp32/Kconfig"
+source "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/esp_common/Kconfig"
+source "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/log/Kconfig"
+source "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/spi_flash/Kconfig"

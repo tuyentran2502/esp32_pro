@@ -1,0 +1,5 @@
+source "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/app_update/Kconfig.projbuild"
+source "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/bootloader/Kconfig.projbuild"
+source "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/esptool_py/Kconfig.projbuild"
+source "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/partition_table/Kconfig.projbuild"
+source "E:/Hoctap/esp_idf/mqtt_tcp/main/Kconfig.projbuild"

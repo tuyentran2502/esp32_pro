@@ -1,0 +1,20 @@
+{
+    "project_name":       "bootloader",
+    "project_path":       "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/bootloader/subproject",
+    "build_dir":          "E:/Hoctap/esp_idf/mqtt_tcp/build/bootloader",
+    "config_file":        "E:/Hoctap/esp_idf/mqtt_tcp/sdkconfig",
+    "config_defaults":    "",
+    "app_elf":            "bootloader.elf",
+    "app_bin":            "bootloader.bin",
+    "git_revision":       "v4.2.5-dirty",
+    "target":             "esp32",
+    "phy_data_partition": "",
+    "monitor_baud" :      "115200",
+    "monitor_toolprefix": "xtensa-esp32-elf-",
+    "config_environment" : {
+        "COMPONENT_KCONFIGS" : "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/efuse/Kconfig;E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/esp32/Kconfig;E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/esp_common/Kconfig;E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/log/Kconfig;E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/spi_flash/Kconfig",
+        "COMPONENT_KCONFIGS_PROJBUILD" : "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/bootloader/Kconfig.projbuild;E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/esptool_py/Kconfig.projbuild;E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/partition_table/Kconfig.projbuild"
+    },
+    "build_components" : [ "bootloader", "bootloader_support", "efuse", "esp32", "esp_common", "esp_rom", "esptool_py", "log", "main", "micro-ecc", "partition_table", "soc", "spi_flash", "xtensa", "" ],
+    "build_component_paths" : [ "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/bootloader", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/bootloader_support", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/efuse", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/esp32", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/esp_common", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/esp_rom", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/esptool_py", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/log", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/bootloader/subproject/main", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/bootloader/subproject/components/micro-ecc", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/partition_table", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/soc", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/spi_flash", "E:/Hoctap/esp_idf/Espressif/frameworks/esp-idf-v4.2.5/components/xtensa", "" ]
+}
