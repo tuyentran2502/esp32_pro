@@ -46,13 +46,58 @@ static wifi_config_t wifi_AP_default_config = {
         .authmode = WIFI_AUTH_WPA_WPA2_PSK},
 };
 
-void mqtt_data_callback( char *data, int len)
+void http_receive_wifi_info_callback(char *buf)
 {
-    ESP_LOGI(TAG,"DATA : %s\n LEN : %d", data, len);
+    nvs_handle_t nvs_handle;
+    char username_rev[32];
+    char password_rev[64];
+
+    memset(username_rev, 0, sizeof(username_rev));
+    memset(password_rev, 0, sizeof(password_rev));
+
+    ESP_LOGI(TAG, "=========== RECEIVED DATA ==========");
+    ESP_LOGI(TAG, "%s\n", buf);
+    ESP_LOGI(TAG, "====================================");
+
+    if (json_login_deserialize(buf, username_rev, password_rev) == ESP_OK)
+    {
+        ESP_LOGI(TAG, "user name: %s", username_rev);
+        ESP_LOGI(TAG, "password: %s", password_rev);
+    }
+
+    /* Initialize NVS */
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
+    {
+        // NVS partition was truncated and needs to be erased
+        // Retry nvs_flash_init
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+
+    ESP_ERROR_CHECK(err);
+    /*save to the nvs flash. */
+    err = nvs_open("wifi_config", NVS_READWRITE, &nvs_handle);
+    ESP_ERROR_CHECK(err);
+
+    err = nvs_set_str(nvs_handle, "ssid", username_rev);
+    ESP_ERROR_CHECK(err);
+
+    err = nvs_set_str(nvs_handle, "password", password_rev);
+    ESP_ERROR_CHECK(err);
+
+    err = nvs_commit(nvs_handle);
+    ESP_ERROR_CHECK(err);
+
+    esp_restart();
 }
 
 void app_main(void)
 {
+    nvs_handle_t nvs_handle;
+    size_t ssidLen, passLen;
+    char *ssid = NULL, *pass = NULL;
+
     ESP_LOGI(TAG, "[APP] Startup..");
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
     ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
@@ -61,19 +106,16 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    WIFI_initAccessPointMode(wifi_AP_default_config);
+    nvs_open("storage", NVS_READWRITE, &nvs_handle);
+    if (nvs_get_str(nvs_handle, "pass", ssid, &ssidLen) == ESP_OK && nvs_get_str(nvs_handle, "pass", pass, &passLen) == ESP_OK)
+    {
+        WIFI_initStationMode(wifi_STA_default_config);
+    }
+    else
+    {
+        WIFI_initAccessPointMode(wifi_AP_default_config);
+    }
     start_webserver();
+    http_setCallback(http_receive_wifi_info_callback);
 
-
-    // if(WIFI_CONNECTED == WIFI_status())
-    // {
-    //     ESP_LOGI(TAG, "connected to ap SSID:%s password:%s", WIFI_SSID, WIFI_PASS);
-    // }
-    // else
-    // {
-    //     ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s", WIFI_SSID, WIFI_PASS);
-    // }
-    // MQTT_init();
-    // MQTT_setCallback(mqtt_data_callback);
-    // MQTT_appStart();
 }

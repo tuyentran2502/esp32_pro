@@ -6,6 +6,7 @@ set(APP_SRC
 )
 set(COMPONENTS_REQ
         nvs_flash
+        json
         mqtt
         driver
         esp_wifi
