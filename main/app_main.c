@@ -59,15 +59,16 @@ void http_receive_wifi_info_callback(char *buf)
     ESP_LOGI(TAG, "%s\n", buf);
     ESP_LOGI(TAG, "====================================");
 
-    if (json_login_deserialize(buf, username_rev, password_rev) == ESP_OK)
+    /* parse data from json type.*/
+    if (HTTP_jsonLoginDeserialize(buf, username_rev, password_rev) == ESP_OK)
     {
         ESP_LOGI(TAG, "user name: %s", username_rev);
         ESP_LOGI(TAG, "password: %s", password_rev);
     }
-
-    hw_api_init();
+    /* store wifi information to the nvs flash. */
     hw_api_store_wifi(username_rev, password_rev);
 
+    /* reset chip. */
     esp_restart();
 }
 
@@ -80,15 +81,18 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     hw_api_init();
+    /* check wifi information is saved in the nvs flash. */
+    WIFI_initStationMode(wifi_STA_default_config);
     esp_err_t err = hw_api_restore_wifi(username_restore, password_restore);
     if (err != ESP_OK)
     {
         WIFI_initAccessPointMode(wifi_AP_default_config);
-        start_webserver();
-        http_setCallback(http_receive_wifi_info_callback);
+        HTTP_startWebserver();
+        HTTP_setCallback(http_receive_wifi_info_callback);
     }
     else
     {
         WIFI_initStationMode(wifi_STA_default_config);
+        /*other action. */
     }
 }

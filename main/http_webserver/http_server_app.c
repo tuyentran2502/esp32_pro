@@ -14,6 +14,7 @@
 
 #define JSON_USERNAME_KEY "ssid"
 #define JSON_PASSWORD_KEY "pass"
+
 static http_handle_data_t http_data_handle = NULL;
 
 static const char *TAG = "HTTP_SERVER";
@@ -22,29 +23,9 @@ static httpd_handle_t server = NULL;
 extern const uint8_t config_wifi_html_start[] asm("_binary_config_wifi_html_start");
 extern const uint8_t config_wifi_html_end[] asm("_binary_config_wifi_html_end");
 
-int json_login_deserialize(char *input_data, char *user, char *password)
-{
-    cJSON *item;
-    cJSON *root = cJSON_Parse(input_data);
-    if (root == NULL)
-    {
-        ESP_LOGI(TAG, "Can't parse login json");
-        return 1;
-    }
-    else
-    {
-        /* Get version info */
-        item = cJSON_GetObjectItem(root, JSON_USERNAME_KEY);
-        sprintf(user, "%s", item->valuestring);
+static esp_err_t web_get_handler(httpd_req_t *req);
+static esp_err_t wifi_post_handler(httpd_req_t *req);
 
-        item = cJSON_GetObjectItem(root, JSON_PASSWORD_KEY);
-        sprintf(password, "%s", item->valuestring);
-
-        cJSON_Delete(root);
-
-        return 0;
-    }
-}
 /* An HTTP GET handler */
 static esp_err_t web_get_handler(httpd_req_t *req)
 {
@@ -57,21 +38,12 @@ static esp_err_t web_get_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-static const httpd_uri_t web_config = {
-    .uri = "/UIweb",
-    .method = HTTP_GET,
-    .handler = web_get_handler,
-    /* Let's pass response string in user
-     * context to demonstrate it's usage */
-    .user_ctx = "Hello World!"};
-
 /* An HTTP POST handler */
 static esp_err_t wifi_post_handler(httpd_req_t *req)
 {
     char buf[100];
     esp_err_t ret;
     int32_t remaining = req->content_len;
-
 
     while (remaining > 0)
     {
@@ -96,21 +68,23 @@ static esp_err_t wifi_post_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
+static const httpd_uri_t web_config = {
+    .uri = "/UIweb",
+    .method = HTTP_GET,
+    .handler = web_get_handler,
+    /* Let's pass response string in user
+     * context to demonstrate it's usage */
+    .user_ctx = "Hello World!"
+};
+
 static const httpd_uri_t receive_wifi_info = {
     .uri = "/wifi_info",
     .method = HTTP_POST,
     .handler = wifi_post_handler,
-    .user_ctx = NULL};
+    .user_ctx = NULL
+};
 
-void http_setCallback(void *callback)
-{
-    if (callback != NULL)
-    {
-        http_data_handle = callback;
-    }
-}
-
-esp_err_t http_404_error_handler(httpd_req_t *req, httpd_err_code_t err)
+static esp_err_t http_404_error_handler(httpd_req_t *req, httpd_err_code_t err)
 {
     if (strcmp("/UIweb", req->uri) == 0)
     {
@@ -129,7 +103,7 @@ esp_err_t http_404_error_handler(httpd_req_t *req, httpd_err_code_t err)
     return ESP_FAIL;
 }
 
-void start_webserver(void)
+void HTTP_startWebserver(void)
 {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.lru_purge_enable = true;
@@ -151,8 +125,40 @@ void start_webserver(void)
     }
 }
 
-void stop_webserver(void)
+void HTTP_stopWebserver(void)
 {
     // Stop the httpd server
     httpd_stop(server);
+}
+
+int HTTP_jsonLoginDeserialize(char *input_data, char *user, char *password)
+{
+    cJSON *item;
+    cJSON *root = cJSON_Parse(input_data);
+    if (root == NULL)
+    {
+        ESP_LOGI(TAG, "Can't parse login json");
+        return 1;
+    }
+    else
+    {
+        /* Get version info */
+        item = cJSON_GetObjectItem(root, JSON_USERNAME_KEY);
+        sprintf(user, "%s", item->valuestring);
+
+        item = cJSON_GetObjectItem(root, JSON_PASSWORD_KEY);
+        sprintf(password, "%s", item->valuestring);
+
+        cJSON_Delete(root);
+
+        return 0;
+    }
+}
+
+void HTTP_setCallback(void *callback)
+{
+    if (callback != NULL)
+    {
+        http_data_handle = callback;
+    }
 }
