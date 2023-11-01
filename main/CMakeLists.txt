@@ -10,6 +10,7 @@ set(COMPONENTS_REQ
         driver
         esp_wifi
         esp_http_server
+        app_update
 )
 set(APP_INCLUDES
         "."

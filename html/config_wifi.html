@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WiFi and Password input form</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .input-group {
+        margin-bottom: 20px;
+      }
+
+      .input-group label {
+        display: block;
+        font-weight: bold;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .submit-button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .submit-button:hover {
+        background-color: #0056b3;
+      }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>WIFI Information</h2>
+      <form action="#" method="post">
+        <div class="input-group">
+          <label for="wifiName">SSID:</label>
+          <input type="text" id="wifiName" name="wifiName" required />
+      </div>
+      
+        <div class="input-group">
+        <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required />
+      </div>
+
+        <button type="submit" class="submit-button" id = "button-send" onclick="buttonSendInfor()">Send</button>
+      </form>
+    </div>
+  </body>
+  <script>
+    xhttp1 = new XMLHttpRequest();
+    function buttonSendInfor(){
+            var wifiName = document.getElementById("wifiName").value;
+            var password = document.getElementById("password").value;
+            var data = {
+                ssid: wifiName,
+                pass: password
+            };
+            var jsonData = JSON.stringify(data);
+            xhttp1.open("POST","/wifi_info", true);
+            xhttp1.send(jsonData);
+    }
+
+  </script>
+</html>

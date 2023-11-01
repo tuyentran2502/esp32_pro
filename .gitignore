@@ -1,1 +1,6 @@
-/build
+*.o
+*.a
+*.so
+*.swp
+*.patch
+build/

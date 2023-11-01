@@ -6,6 +6,10 @@
 
 #define WIFI_SSID           "Tang 5"
 #define WIFI_PASS           "03071971"
+
+#define ESP_WIFI_SSID           "Esp32pro"
+#define ESP_WIFI_PASS           "25022000"
+
 #define WIFI_MAXIMUM_RETRY  5U
 #define WIFI_CHANNEL        1U
 #define MAX_CONN_CNT        1U

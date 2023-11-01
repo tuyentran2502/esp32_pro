@@ -38,10 +38,10 @@ static wifi_config_t wifi_STA_default_config = {
 
 static wifi_config_t wifi_AP_default_config = {
     .ap = {
-        .ssid = WIFI_SSID,
-        .ssid_len = strlen(WIFI_SSID),
+        .ssid = ESP_WIFI_SSID,
+        .ssid_len = strlen(ESP_WIFI_SSID),
         .channel = WIFI_CHANNEL,
-        .password = WIFI_PASS,
+        .password = ESP_WIFI_PASS,
         .max_connection = MAX_CONN_CNT,
         .authmode = WIFI_AUTH_WPA_WPA2_PSK},
 };
@@ -61,17 +61,19 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    WIFI_initStationMode(wifi_STA_default_config);
-    if(WIFI_CONNECTED == WIFI_status())
-    {
-        ESP_LOGI(TAG, "connected to ap SSID:%s password:%s", WIFI_SSID, WIFI_PASS);
-    }
-    else
-    {
-        ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s", WIFI_SSID, WIFI_PASS);
-    }
+    WIFI_initAccessPointMode(wifi_AP_default_config);
     start_webserver();
-    MQTT_init();
-    MQTT_setCallback(mqtt_data_callback);
-    MQTT_appStart();
+
+
+    // if(WIFI_CONNECTED == WIFI_status())
+    // {
+    //     ESP_LOGI(TAG, "connected to ap SSID:%s password:%s", WIFI_SSID, WIFI_PASS);
+    // }
+    // else
+    // {
+    //     ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s", WIFI_SSID, WIFI_PASS);
+    // }
+    // MQTT_init();
+    // MQTT_setCallback(mqtt_data_callback);
+    // MQTT_appStart();
 }

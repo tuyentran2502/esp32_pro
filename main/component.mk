@@ -1,0 +1,1 @@
+COMPONENT_EMBED_TXTFILES := ../html/config_wifi.html

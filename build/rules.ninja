@@ -20,6 +20,16 @@ rule CUSTOM_COMMAND
 
 
 #############################################
+# Rule for compiling ASM files.
+
+rule ASM_COMPILER__mqtt_tcp.2eelf
+  depfile = $DEP_FILE
+  deps = gcc
+  command = ccache E:\Hoctap\esp_idf\Espressif\tools\xtensa-esp32-elf\esp-2020r3-8.4.0\xtensa-esp32-elf\bin\xtensa-esp32-elf-gcc.exe $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  description = Building ASM object $out
+
+
+#############################################
 # Rule for compiling C files.
 
 rule C_COMPILER__mqtt_tcp.2eelf

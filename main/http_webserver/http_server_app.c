@@ -13,27 +13,25 @@
 static const char *TAG = "HTTP_SERVER";
 static httpd_handle_t server = NULL;
 
+extern const uint8_t config_wifi_html_start[] asm("_binary_config_wifi_html_start");
+extern const uint8_t config_wifi_html_end[] asm("_binary_config_wifi_html_end"); 
 
 /* An HTTP GET handler */
-static esp_err_t hello_get_handler(httpd_req_t *req)
+static esp_err_t web_get_handler(httpd_req_t *req)
 {
     /* Send response with custom headers and body set as the
      * string passed in user context*/
-    const char* resp_str = (const char*) req->user_ctx;
-    httpd_resp_send(req, resp_str, strlen(resp_str));
+    httpd_resp_set_type(req,"text/html");
+    httpd_resp_send(req, (const char*) config_wifi_html_start,config_wifi_html_end - config_wifi_html_start);
+    httpd_resp_send(req, NULL, 0);
 
-    /* After sending the HTTP response the old HTTP request
-     * headers are lost. Check if HTTP request headers can be read now. */
-    if (httpd_req_get_hdr_value_len(req, "Host") == 0) {
-        ESP_LOGI(TAG, "Request headers lost");
-    }
     return ESP_OK;
 }
 
-static const httpd_uri_t hello = {
-    .uri       = "/dht11",
+static const httpd_uri_t web_config = {
+    .uri       = "/UIweb",
     .method    = HTTP_GET,
-    .handler   = hello_get_handler,
+    .handler   = web_get_handler,
     /* Let's pass response string in user
      * context to demonstrate it's usage */
     .user_ctx  = "Hello World!"
@@ -41,52 +39,37 @@ static const httpd_uri_t hello = {
 
 
 /* An HTTP POST handler */
-static esp_err_t echo_post_handler(httpd_req_t *req)
+static esp_err_t wifi_post_handler(httpd_req_t *req)
 {
     char buf[100];
-    int ret, remaining = req->content_len;
 
-    while (remaining > 0) {
-        /* Read the data for the request */
-        if ((ret = httpd_req_recv(req, buf,
-                        MIN(remaining, sizeof(buf)))) <= 0) {
-            if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
-                /* Retry receiving if timeout occurred */
-                continue;
-            }
-            return ESP_FAIL;
-        }
-
-        /* Send back the same data */
-        httpd_resp_send_chunk(req, buf, ret);
-        remaining -= ret;
-
-        /* Log data received */
-        ESP_LOGI(TAG, "=========== RECEIVED DATA ==========");
-        ESP_LOGI(TAG, "%.*s", ret, buf);
-        ESP_LOGI(TAG, "====================================");
-    }
-
+    /* Read the data for the request */
+    httpd_req_recv(req, buf, req->content_len);
+    /* Log data received */
+    ESP_LOGI(TAG, "=========== RECEIVED DATA ==========");
+    ESP_LOGI(TAG, "%s\n", buf);
+    ESP_LOGI(TAG, "====================================");
     // End response
     httpd_resp_send_chunk(req, NULL, 0);
+
     return ESP_OK;
 }
 
-static const httpd_uri_t echo = {
-    .uri       = "/echo",
+static const httpd_uri_t receive_wifi_info = {
+    .uri       = "/wifi_info",
     .method    = HTTP_POST,
-    .handler   = echo_post_handler,
+    .handler   = wifi_post_handler,
     .user_ctx  = NULL
 };
 
 esp_err_t http_404_error_handler(httpd_req_t *req, httpd_err_code_t err)
 {
-    if (strcmp("/dht11", req->uri) == 0) {
-        httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "/dht11 URI is not available");
+    if (strcmp("/UIweb", req->uri) == 0) {
+        httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "/UIweb URI is not available");
         /* Return ESP_OK to keep underlying socket open */
         return ESP_OK;
-    } else if (strcmp("/echo", req->uri) == 0) {
-        httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "/echo URI is not available");
+    } else if (strcmp("/wifi_info", req->uri) == 0) {
+        httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "/wifi_info URI is not available");
         /* Return ESP_FAIL to close underlying socket */
         return ESP_FAIL;
     }
@@ -107,8 +90,8 @@ void start_webserver(void)
     if (httpd_start(&server, &config) == ESP_OK) {
         // Set URI handlers
         ESP_LOGI(TAG, "Registering URI handlers");
-        httpd_register_uri_handler(server, &hello);
-        httpd_register_uri_handler(server, &echo);
+        httpd_register_uri_handler(server, &web_config);
+        httpd_register_uri_handler(server, &receive_wifi_info);
         httpd_register_err_handler(server, HTTPD_404_NOT_FOUND, http_404_error_handler);
     }
     else

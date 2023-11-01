@@ -10,3 +10,5 @@ set(EXTRA_COMPONENT_DIRS $ENV{IDF_PATH}/components/esp_wifi)
 set(EXTRA_COMPONENT_DIRS $ENV{IDF_PATH}/components/esp_http_server)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(mqtt_tcp)
+
+target_add_binary_data(${CMAKE_PROJECT_NAME}.elf "html/config_wifi.html" TEXT)
