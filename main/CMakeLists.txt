@@ -3,6 +3,7 @@ set(APP_SRC
     "mqtt/mqtt.c"
     "wifi_app/wifi_app.c"
     "http_webserver/http_server_app.c"
+    "hw_api/hw_api.c"
 )
 set(COMPONENTS_REQ
         nvs_flash
@@ -18,6 +19,7 @@ set(APP_INCLUDES
         "wifi_app"
         "mqtt"
         "http_webserver"
+        "hw_api"
 )
 idf_component_register(
         SRCS ${APP_SRC}
